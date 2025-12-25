@@ -48,6 +48,77 @@ func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) (TodoIte
 	return i, err
 }
 
+const deleteItem = `-- name: DeleteItem :one
+DELETE FROM todo_items
+WHERE
+    id = $1
+    AND deleted_at IS NULL
+RETURNING id, title, description, image, status, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeleteItem(ctx context.Context, id int32) (TodoItem, error) {
+	row := q.db.QueryRow(ctx, deleteItem, id)
+	var i TodoItem
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Image,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getItemDetail = `-- name: GetItemDetail :one
+SELECT id, title, description, image, status, created_at, updated_at, deleted_at
+FROM todo_items
+WHERE id = $1
+`
+
+func (q *Queries) GetItemDetail(ctx context.Context, id int32) (TodoItem, error) {
+	row := q.db.QueryRow(ctx, getItemDetail, id)
+	var i TodoItem
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Image,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const restoreItem = `-- name: RestoreItem :one
+UPDATE todo_items
+SET status = 1
+WHERE
+    id = $1
+    AND status = 3
+RETURNING id, title, description, image, status, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) RestoreItem(ctx context.Context, id int32) (TodoItem, error) {
+	row := q.db.QueryRow(ctx, restoreItem, id)
+	var i TodoItem
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Image,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const updateItem = `-- name: UpdateItem :one
 UPDATE todo_items
 SET

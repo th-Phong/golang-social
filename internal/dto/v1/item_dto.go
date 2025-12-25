@@ -35,7 +35,7 @@ type ItemResponse struct {
 	Title       string         `json:"title"`
 	Description string         `json:"description"`
 	Image       *ImageMetadata `json:"image"`
-	Status      int16          `json:"status"`
+	Status      string         `json:"status"`
 	CreatedAt   string         `json:"created_at"`
 	UpdatedAt   string         `json:"updated_at"`
 }
@@ -91,8 +91,21 @@ func MapTodoResponse(todo sqlc.TodoItem) *ItemResponse {
 		Title:       todo.Title,
 		Description: todo.Description,
 		Image:       img,
-		Status:      todo.Status,
+		Status:      MapStatusNumToText(todo.Status),
 		CreatedAt:   todo.CreatedAt.Time.Format(time.DateTime),
 		UpdatedAt:   todo.UpdatedAt.Time.Format(time.DateTime),
+	}
+}
+
+func MapStatusNumToText(status int16) string {
+	switch status {
+	case 1:
+		return "Doing"
+	case 2:
+		return "Done"
+	case 3:
+		return "Deleted"
+	default:
+		return "Unknown"
 	}
 }

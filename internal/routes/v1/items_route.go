@@ -20,7 +20,10 @@ func (ir ItemRoute) Register(r *gin.RouterGroup) {
 	items := r.Group("/items")
 	{
 		items.GET("/", ir.handler.GetAllItem)
+		items.GET("/:id", ir.handler.GetItemDetail)
 		items.POST("/", ir.handler.CreateItem)
 		items.PUT("/:id", ir.handler.UpdateItem)
+		items.PUT("/:id/restore", ir.handler.RestoreItem)
+		items.DELETE("/:id", ir.handler.DeleteItem)
 	}
 }

@@ -77,3 +77,53 @@ func (ih *ItemHandler) UpdateItem(ctx *gin.Context) {
 		"data": v1dto.MapTodoResponse(todoUpdate),
 	})
 }
+
+func (ih *ItemHandler) GetItemDetail(ctx *gin.Context) {
+	var param v1dto.GetTodoIdParam
+	if err := ctx.ShouldBindUri(&param); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	todoItem, err := ih.service.GetItemDetail(ctx, param.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": v1dto.MapTodoResponse(todoItem),
+	})
+}
+
+func (ih *ItemHandler) DeleteItem(ctx *gin.Context) {
+	var param v1dto.GetTodoIdParam
+	if err := ctx.ShouldBindUri(&param); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := ih.service.DeleteItem(ctx, param.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
+func (ih *ItemHandler) RestoreItem(ctx *gin.Context) {
+	var param v1dto.GetTodoIdParam
+	if err := ctx.ShouldBindUri(&param); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	todoItem, err := ih.service.RestoreItem(ctx, param.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": v1dto.MapTodoResponse(todoItem),
+	})
+}

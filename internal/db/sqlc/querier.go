@@ -10,6 +10,9 @@ import (
 
 type Querier interface {
 	CreateItem(ctx context.Context, arg CreateItemParams) (TodoItem, error)
+	DeleteItem(ctx context.Context, id int32) (TodoItem, error)
+	GetItemDetail(ctx context.Context, id int32) (TodoItem, error)
+	RestoreItem(ctx context.Context, id int32) (TodoItem, error)
 	UpdateItem(ctx context.Context, arg UpdateItemParams) (TodoItem, error)
 }
 

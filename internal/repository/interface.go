@@ -9,4 +9,7 @@ type ItemRepository interface {
 	GetAll(ctx context.Context) ([]sqlc.TodoItem, error)
 	Create(ctx context.Context, input sqlc.CreateItemParams) (sqlc.TodoItem, error)
 	Update(ctx context.Context, input sqlc.UpdateItemParams) (sqlc.TodoItem, error)
+	Delete(ctx context.Context, id int32) error
+	GetDetail(ctx context.Context, id int32) (sqlc.TodoItem, error)
+	Restore(ctx context.Context, id int32) (sqlc.TodoItem, error)
 }

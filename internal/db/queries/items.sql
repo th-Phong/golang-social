@@ -20,3 +20,22 @@ WHERE
     AND deleted_at IS NULL
 RETURNING *;
 
+-- name: GetItemDetail :one
+SELECT *
+FROM todo_items
+WHERE id = $1;
+
+-- name: DeleteItem :one
+DELETE FROM todo_items
+WHERE
+    id = $1
+    AND deleted_at IS NULL
+RETURNING *;
+
+-- name: RestoreItem :one
+UPDATE todo_items
+SET status = 1
+WHERE
+    id = sqlc.arg(id)
+    AND status = 3
+RETURNING *;
