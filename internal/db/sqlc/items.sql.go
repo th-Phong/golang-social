@@ -53,9 +53,11 @@ UPDATE todo_items
 SET
     title = COALESCE($1, title),
     description = COALESCE($2, description),
-    image = COALESCE($3, image)
+    image = COALESCE($3, image),
+    status = COALESCE($4, status)
 WHERE
-    id = $4
+    id = $5
+    AND deleted_at IS NULL
 RETURNING id, title, description, image, status, created_at, updated_at, deleted_at
 `
 
@@ -63,6 +65,7 @@ type UpdateItemParams struct {
 	Title       *string `json:"title"`
 	Description string  `json:"description"`
 	Image       []byte  `json:"image"`
+	Status      *int16  `json:"status"`
 	ID          int32   `json:"id"`
 }
 
@@ -71,6 +74,7 @@ func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) (TodoIte
 		arg.Title,
 		arg.Description,
 		arg.Image,
+		arg.Status,
 		arg.ID,
 	)
 	var i TodoItem

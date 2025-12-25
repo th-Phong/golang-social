@@ -13,10 +13,10 @@ UPDATE todo_items
 SET
     title = COALESCE(sqlc.narg(title), title),
     description = COALESCE(sqlc.narg(description), description),
-    image = COALESCE(sqlc.narg(image), image)
+    image = COALESCE(sqlc.narg(image), image),
     status = COALESCE(sqlc.narg(status), status)
 WHERE
     id = sqlc.arg(id)
+    AND deleted_at IS NULL
 RETURNING *;
-
 

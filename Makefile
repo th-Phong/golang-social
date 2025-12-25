@@ -22,6 +22,14 @@ migrate-up:
 migrate-down:
 	migrate -path $(MIGRATION_DIRS) -database "$(CONN_STRING)" down 1
 
+# Update N migrations
+migrate-up-n:
+	migrate -path $(MIGRATION_DIRS) -database "$(CONN_STRING)" up $(N)
+
+# Rollback N migrations
+migrate-down-n:
+	migrate -path $(MIGRATION_DIRS) -database "$(CONN_STRING)" down $(N)
+
 # Force migration version (use with caution example: make migrate-force VERSION=1)
 migrate-force:
 	migrate -path $(MIGRATION_DIRS) -database "$(CONN_STRING)" force $(VERSION)

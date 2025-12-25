@@ -26,3 +26,11 @@ func (ir *SQLItemRepository) Create(ctx context.Context, input sqlc.CreateItemPa
 	}
 	return todoItem, nil
 }
+
+func (ir *SQLItemRepository) Update(ctx context.Context, input sqlc.UpdateItemParams) (sqlc.TodoItem, error) {
+	todoItem, err := ir.db.UpdateItem(ctx, input)
+	if err != nil {
+		return sqlc.TodoItem{}, err
+	}
+	return todoItem, nil
+}
