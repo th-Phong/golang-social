@@ -2,6 +2,7 @@ package v1service
 
 import (
 	"phongtran/go-social/golang-social/internal/db/sqlc"
+	v1dto "phongtran/go-social/golang-social/internal/dto/v1"
 	"phongtran/go-social/golang-social/internal/repository"
 
 	"github.com/gin-gonic/gin"
@@ -28,12 +29,13 @@ func (is *itemService) GetAllItems(ctx *gin.Context) ([]sqlc.TodoItem, error) {
 	return []sqlc.TodoItem{}, nil
 }
 
-func (is *itemService) CreateItem(ctx *gin.Context, input sqlc.CreateItemParams) (sqlc.TodoItem, error) {
+func (is *itemService) CreateItem(ctx *gin.Context, input v1dto.CreateItemRequest) (sqlc.TodoItem, error) {
 	context := ctx.Request.Context()
 
-	items, err := is.repo.Create(context, input)
+	dbParams, err := input.MapCreateInputToParams()
+	items, err := is.repo.Create(context, dbParams)
 	if err != nil {
-		return nil, err
+		return sqlc.TodoItem{}, err
 	}
 
 	return items, nil

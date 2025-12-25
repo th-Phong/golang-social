@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"os"
 	"strconv"
 )
@@ -32,4 +33,12 @@ func GetWorkingDir() string {
 		panic(err)
 	}
 	return dir
+}
+
+func ToJSONB(data interface{}) []byte {
+	if data == nil {
+		return nil
+	}
+	bytes, _ := json.Marshal(data)
+	return bytes
 }

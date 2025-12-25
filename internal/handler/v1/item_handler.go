@@ -36,21 +36,20 @@ func (ih *ItemHandler) GetAllItem(ctx *gin.Context) {
 }
 
 func (ih *ItemHandler) CreateItem(ctx *gin.Context) {
-	var params v1dto.CreateItemParams
+	var params v1dto.CreateItemRequest
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
-	todoItem := params.
-
 	items, err := ih.service.CreateItem(ctx, params)
 
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": items,
+	ctx.JSON(http.StatusCreated, gin.H{
+		"data": v1dto.MapTodoResponse(items),
 	})
 }

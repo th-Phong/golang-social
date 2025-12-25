@@ -14,6 +14,7 @@ SET
     title = COALESCE(sqlc.narg(title), title),
     description = COALESCE(sqlc.narg(description), description),
     image = COALESCE(sqlc.narg(image), image)
+    status = COALESCE(sqlc.narg(status), status)
 WHERE
     id = sqlc.arg(id)
 RETURNING *;

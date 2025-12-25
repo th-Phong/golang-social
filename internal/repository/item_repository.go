@@ -20,5 +20,9 @@ func (ir *SQLItemRepository) GetAll(ctx context.Context) ([]sqlc.TodoItem, error
 }
 
 func (ir *SQLItemRepository) Create(ctx context.Context, input sqlc.CreateItemParams) (sqlc.TodoItem, error) {
-	return sqlc.TodoItem{}, nil
+	todoItem, err := ir.db.CreateItem(ctx, input)
+	if err != nil {
+		return sqlc.TodoItem{}, err
+	}
+	return todoItem, nil
 }

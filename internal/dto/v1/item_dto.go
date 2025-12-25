@@ -1,33 +1,67 @@
 package v1dto
 
-import "phongtran/go-social/golang-social/internal/db/sqlc"
+import (
+	"encoding/json"
+	"phongtran/go-social/golang-social/internal/db/sqlc"
+	"time"
+)
 
-type CreateItemParams struct {
-	Title       string `json:"title" binding:"required,min=5"`
-	Description string `json:"description,omitempty"`
-	Image       []byte `json:"image,omitempty"`
-	Status      int16  `json:"status,omitempty"`
+type ImageMetadata struct {
+	URL      string `json:"url"`
+	FileName string `json:"file_name"`
+	Size     *int64 `json:"size"`
 }
 
-type UpdateItemParams struct {
-	Title       string  `json:"title" binding:"required,min=5"`
-	Description *string `json:"description,omitempty"`
-	Status      string  `json:"status"  binding:"required,oneof=Doing Done Deleted"`
+type CreateItemRequest struct {
+	Title       string         `json:"title" binding:"required,min=5"`
+	Description string         `json:"description,omitempty"`
+	Image       *ImageMetadata `json:"image,omitempty"`
+	Status      int16          `json:"status,omitempty"`
 }
 
-type GetItemsParams struct {
-	Search string `form:"search" binding:"omitempty,min=1,max=20"`
-	Page   int    `form:"page" binding:"omitempty"`
-	Limit  int    `form:"limit" binding:"omitempty"`
-	Order  string `form:"order" binding:"omitempty"`
-	Sort   string `form:"sort" binding:"omitempty"`
+type ItemResponse struct {
+	ID          int32          `json:"id"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	Image       *ImageMetadata `json:"image"`
+	Status      int16          `json:"status"`
+	CreatedAt   string         `json:"created_at"`
+	UpdatedAt   string         `json:"updated_at"`
 }
 
-func (input *CreateItemParams) MapCreateInputToModel() sqlc.CreateItemParams {
+func (req *CreateItemRequest) MapCreateInputToParams() (sqlc.CreateItemParams, error) {
+	var imgBytes []byte = nil
+	var err error
+
+	if req.Image != nil && req.Image.URL != "" {
+		imgBytes, err = json.Marshal(req.Image)
+		if err != nil {
+			return sqlc.CreateItemParams{}, err
+		}
+	}
+
 	return sqlc.CreateItemParams{
-		Title:       input.Title,
-		Description: input.Description,
-		Image:       input.Image,
-		Status:      input.Status,
+		Title:       req.Title,
+		Description: req.Description,
+		Image:       imgBytes,
+		Status:      req.Status,
+	}, nil
+}
+
+func MapTodoResponse(todo sqlc.TodoItem) *ItemResponse {
+	var img *ImageMetadata = nil
+
+	if len(todo.Image) > 0 {
+		_ = json.Unmarshal(todo.Image, &img)
+	}
+
+	return &ItemResponse{
+		ID:          todo.ID,
+		Title:       todo.Title,
+		Description: todo.Description,
+		Image:       img,
+		Status:      todo.Status,
+		CreatedAt:   todo.CreatedAt.Time.Format(time.DateTime),
+		UpdatedAt:   todo.UpdatedAt.Time.Format(time.DateTime),
 	}
 }

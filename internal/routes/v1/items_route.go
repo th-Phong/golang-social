@@ -20,5 +20,6 @@ func (ir ItemRoute) Register(r *gin.RouterGroup) {
 	items := r.Group("/items")
 	{
 		items.GET("/", ir.handler.GetAllItem)
+		items.POST("/", ir.handler.CreateItem)
 	}
 }
